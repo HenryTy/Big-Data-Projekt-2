@@ -9,7 +9,7 @@ object Facts {
     val spark = SparkSession
       .builder()
       .appName("Facts")
-//      .master("local")
+      //      .master("local")
       .enableHiveSupport()
       .getOrCreate()
 
@@ -76,7 +76,7 @@ object Facts {
 
     val allTrafficWithTimeAndWeather = allTrafficWithTime.join(weatherWithTime,
       weatherWithTime("timestamp") === allTrafficWithTime("timestampDate") &&
-      weatherWithTime("local_authoirty_ons_code") === allTrafficWithTime("local_authoirty_ons_code")
+        weatherWithTime("local_authoirty_ons_code") === allTrafficWithTime("local_authoirty_ons_code")
     ).select(allTrafficWithTime("ID"), $"conditions")
 
 
@@ -97,28 +97,28 @@ object Facts {
     val weatherDF = spark.sql("SELECT * FROM pogoda")
 
     val trafficWeather = allTrafficWithTimeAndWeather.join(weatherDF,
-      weatherDF("opis_pogody") === allTrafficWithTime("conditions")
+      weatherDF("opis_pogody") === allTrafficWithTimeAndWeather("conditions")
     ).select(allTrafficWithTimeAndWeather("ID").as("id"), weatherDF("id").as("id_pogody"))
 
 
     val locationDF = spark.sql("SELECT * FROM miejsca")
 
     val trafficLocation = allTrafficWithTime.join(locationDF,
-      weatherDF("kod_ons_obszaru") === allTrafficWithTime("local_authoirty_ons_code") &&
-        weatherDF("nazwa_drogi") === allTrafficWithTime("road_name") &&
-        weatherDF("kategoria_drogi") === allTrafficWithTime("road_category")
-    ).select(allTrafficWithTime("ID").as("id"), locationDF("id").as("id_miejsca"))
+      locationDF("kod_ons_obszaru") === allTrafficWithTime("local_authoirty_ons_code") &&
+        locationDF("nazwa_drogi") === allTrafficWithTime("road_name") &&
+        locationDF("kategoria_drogi") === allTrafficWithTime("road_category")
+    ).select(allTrafficWithTime("ID").as("id"), locationDF("id").as("id_miejsca"), allTrafficWithTime("vehicle_count"))
 
 
     val finalTable = trafficTimes
       .join(trafficLocation, trafficLocation("id") === trafficTimes("id"))
       .join(trafficTypes, trafficTypes("id") === trafficTimes("id"))
       .join(trafficWeather, trafficWeather("id") === trafficTimes("id"))
-      .select($"id_czasu", $"id_pojazdu", $"id_miejsca", $"id_pogody", $"vehicle_count".as("liczba_pojazdow")) //X: vehicle_count zadziala?
+      .select($"id_czasu", $"id_pojazdu", $"id_miejsca", $"id_pogody", trafficLocation("vehicle_count").as("liczba_pojazdow")) 
 
 
-//    finalTable.show()
-//    finalTable.printSchema()
+    //    finalTable.show()
+    //    finalTable.printSchema()
     finalTable.write.insertInto("fakty")
     println("Załadowano tabele faktow")
 
