@@ -53,9 +53,9 @@ object Facts {
       .filter(!_.equals("None"))
       .withColumn("splitted", split($"value", ";"))
       .select(
-        $"splited".getItem(0).as("local_authoirty_ons_code").cast("string"),
-        $"splited".getItem(1).as("timestamp"),
-        $"splited".getItem(2).as("conditions").cast("string")
+        $"splitted".getItem(0).as("local_authoirty_ons_code").cast("string"),
+        $"splitted".getItem(1).as("timestamp"),
+        $"splitted".getItem(2).as("conditions").cast("string")
       )
       .withColumn("timestamp", to_timestamp($"timestamp", "yyyy-MM-dd HH:mm:ss.S"))
       .withColumn("Year", functions.year(col("timestamp")))
