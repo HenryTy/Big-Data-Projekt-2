@@ -43,7 +43,7 @@ object Czas {
 			
 		val timeDF = startTimeDF
 			.withColumn("godzina", col("hour"))
-			.withColumn("data", functions.date_format(col("count_date")))
+			.withColumn("data", functions.date_format(col("count_date"), "MM/dd/yyyy"))
 			.withColumn("rok", col("year"))
 			.withColumn("miesiac", functions.month(col("count_date")))
 			.withColumn("kwartal", functions.quarter(col("count_date")))
