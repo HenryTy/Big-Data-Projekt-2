@@ -7,7 +7,7 @@ import org.apache.spark.sql.{SparkSession, functions}
 
 object Czas {
 	def main(args: Array[String]) {
-		val spark = SparkSessioon
+		val spark = SparkSession
 			.builder()
 			.appName("Czas")
 			.enableHiveSupport()
