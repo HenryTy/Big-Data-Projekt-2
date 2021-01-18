@@ -40,7 +40,7 @@ object Facts {
 
 
     // LOADING WEATHER
-   def getWeatherConditionsFromLine(line: String): String = {
+    def getWeatherConditionsFromLine(line: String): String = {
       val pattern = """^.+ of (.+) on (.+) at (.+) the following weather conditions were reported: (.+)$""".r
       line match {
         case pattern(local_authoirty_ons_code, date, time, conditions) => local_authoirty_ons_code + ";" + date + " " + time + ";" + conditions
@@ -75,56 +75,34 @@ object Facts {
       (r.getInt(0), r.getInt(2), r.getTimestamp(3), r.getInt(4), r.getString(5), r.getInt(v._2 + 17), v._1, r.getString(6), r.getString(7))))
       .toDF("ID", "year", "timestampDate", "hour", "local_authoirty_ons_code", "vehicle_count", "vehicle_type", "road_name", "road_category")
 
-
-    val allTrafficWithTimeAndWeather = allTrafficWithTime.join(weatherWithTime,
-      weatherWithTime("Year") === allTrafficWithTime("year") &&
-      weatherWithTime("Month") === functions.month(allTrafficWithTime("timestampDate")) &&
-      weatherWithTime("Day") === functions.dayofmonth(allTrafficWithTime("timestampDate")) &&
-      weatherWithTime("Hour") === allTrafficWithTime("hour") &&
-        weatherWithTime("local_authoirty_ons_code") === allTrafficWithTime("local_authoirty_ons_code")
-    ).select(allTrafficWithTime("ID"), $"conditions")
-
-
     val timeDF = spark.sql("SELECT * FROM czas")
-
-    val trafficTimes = allTrafficWithTime.join(timeDF,
-      to_timestamp(timeDF("data")) === allTrafficWithTime("timestampDate") &&
-      timeDF("godzina") === allTrafficWithTime("hour")
-    ).select(allTrafficWithTime("ID").as("id"), timeDF("id").as("id_czasu"))
-
 
     val typesDF = spark.sql("SELECT * FROM typy_pojazdow")
 
-    val trafficTypes = allTrafficWithTime.join(typesDF,
-      typesDF("typ") === allTrafficWithTime("vehicle_type")
-    ).select(allTrafficWithTime("ID").as("id"), typesDF("id").as("id_pojazdu"))
-
-
     val weatherDF = spark.sql("SELECT * FROM pogoda")
-
-    val trafficWeather = allTrafficWithTimeAndWeather.join(weatherDF,
-      weatherDF("opis_pogody") === allTrafficWithTimeAndWeather("conditions")
-    ).select(allTrafficWithTimeAndWeather("ID").as("id"), weatherDF("id").as("id_pogody"))
-
 
     val locationDF = spark.sql("SELECT * FROM miejsca")
 
-    val trafficLocation = allTrafficWithTime.join(locationDF,
+    val finalTable = allTrafficWithTime.join(weatherWithTime,
+      weatherWithTime("Year") === allTrafficWithTime("year") &&
+        weatherWithTime("Month") === functions.month(allTrafficWithTime("timestampDate")) &&
+        weatherWithTime("Day") === functions.dayofmonth(allTrafficWithTime("timestampDate")) &&
+        weatherWithTime("Hour") === allTrafficWithTime("hour") &&
+        weatherWithTime("local_authoirty_ons_code") === allTrafficWithTime("local_authoirty_ons_code")
+    ).join(timeDF,
+      to_timestamp(timeDF("data")) === allTrafficWithTime("timestampDate") &&
+        timeDF("godzina") === allTrafficWithTime("hour")
+    ).join(typesDF,
+      typesDF("typ") === allTrafficWithTime("vehicle_type")
+    ).join(weatherDF,
+      weatherDF("opis_pogody") === weatherWithTime("conditions")
+    ).join(locationDF,
       locationDF("kod_ons_obszaru") === allTrafficWithTime("local_authoirty_ons_code") &&
         locationDF("nazwa_drogi") === allTrafficWithTime("road_name") &&
         locationDF("kategoria_drogi") === allTrafficWithTime("road_category")
-    ).select(allTrafficWithTime("ID").as("id"), locationDF("id").as("id_miejsca"), allTrafficWithTime("vehicle_count"))
+    ).select(timeDF("id").as("id_czasu"), typesDF("id").as("id_pojazdu"), locationDF("id").as("id_miejsca"), weatherDF("id").as("id_pogody"), allTrafficWithTime("vehicle_count").as("liczba_pojazdow"))
 
-
-    val finalTable = trafficTimes
-      .join(trafficLocation, trafficLocation("id") === trafficTimes("id"))
-      .join(trafficTypes, trafficTypes("id") === trafficTimes("id"))
-      .join(trafficWeather, trafficWeather("id") === trafficTimes("id"))
-      .select($"id_czasu", $"id_pojazdu", $"id_miejsca", $"id_pogody", trafficLocation("vehicle_count").as("liczba_pojazdow"))
-
-
-    //    finalTable.show()
-    //    finalTable.printSchema()
+    
     finalTable.write.insertInto("fakty")
     println("Załadowano tabele faktow")
 
