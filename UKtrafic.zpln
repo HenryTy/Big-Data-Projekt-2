@@ -1,0 +1,222 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "spark.version",
+      "user": "anonymous",
+      "dateUpdated": "2021-01-18T22:20:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "completionKey": "TAB",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "language": "scala"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres2\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m = 3.1.0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1611007031729_305349521",
+      "id": "paragraph_1611007031729_305349521",
+      "dateCreated": "2021-01-18T21:57:11+0000",
+      "dateStarted": "2021-01-18T22:20:45+0000",
+      "dateFinished": "2021-01-18T22:20:45+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:2074"
+    },
+    {
+      "text": "val czasDF = spark.sql(\"SELECT * FROM czas\")\nval typyDF = spark.sql(\"SELECT * FROM typy_pojazdow\")\nval miejscaDF = spark.sql(\"SELECT * FROM miejsca\")\nval pogodaDF = spark.sql(\"SELECT * from pogoda\")\nval faktyDF = spark.sql(\"SELECT * from fakty\")",
+      "user": "anonymous",
+      "dateUpdated": "2021-01-18T22:26:04+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "completionKey": "TAB",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "language": "scala"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "ERROR",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "org.apache.spark.sql.AnalysisException: Table or view not found: czas; line 1 pos 14;\n'Project [*]\n+- 'UnresolvedRelation [czas], [], false\n\n  at org.apache.spark.sql.catalyst.analysis.package$AnalysisErrorAt.failAnalysis(package.scala:42)\n  at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.$anonfun$checkAnalysis$1(CheckAnalysis.scala:113)\n  at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.$anonfun$checkAnalysis$1$adapted(CheckAnalysis.scala:93)\n  at org.apache.spark.sql.catalyst.trees.TreeNode.foreachUp(TreeNode.scala:183)\n  at org.apache.spark.sql.catalyst.trees.TreeNode.$anonfun$foreachUp$1(TreeNode.scala:182)\n  at org.apache.spark.sql.catalyst.trees.TreeNode.$anonfun$foreachUp$1$adapted(TreeNode.scala:182)\n  at scala.collection.immutable.List.foreach(List.scala:431)\n  at org.apache.spark.sql.catalyst.trees.TreeNode.foreachUp(TreeNode.scala:182)\n  at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.checkAnalysis(CheckAnalysis.scala:93)\n  at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.checkAnalysis$(CheckAnalysis.scala:90)\n  at org.apache.spark.sql.catalyst.analysis.Analyzer.checkAnalysis(Analyzer.scala:154)\n  at org.apache.spark.sql.catalyst.analysis.Analyzer.$anonfun$executeAndCheck$1(Analyzer.scala:175)\n  at org.apache.spark.sql.catalyst.plans.logical.AnalysisHelper$.markInAnalyzer(AnalysisHelper.scala:228)\n  at org.apache.spark.sql.catalyst.analysis.Analyzer.executeAndCheck(Analyzer.scala:172)\n  at org.apache.spark.sql.execution.QueryExecution.$anonfun$analyzed$1(QueryExecution.scala:73)\n  at org.apache.spark.sql.catalyst.QueryPlanningTracker.measurePhase(QueryPlanningTracker.scala:111)\n  at org.apache.spark.sql.execution.QueryExecution.$anonfun$executePhase$1(QueryExecution.scala:143)\n  at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:772)\n  at org.apache.spark.sql.execution.QueryExecution.executePhase(QueryExecution.scala:143)\n  at org.apache.spark.sql.execution.QueryExecution.analyzed$lzycompute(QueryExecution.scala:73)\n  at org.apache.spark.sql.execution.QueryExecution.analyzed(QueryExecution.scala:71)\n  at org.apache.spark.sql.execution.QueryExecution.assertAnalyzed(QueryExecution.scala:63)\n  at org.apache.spark.sql.Dataset$.$anonfun$ofRows$2(Dataset.scala:98)\n  at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:772)\n  at org.apache.spark.sql.Dataset$.ofRows(Dataset.scala:96)\n  at org.apache.spark.sql.SparkSession.$anonfun$sql$1(SparkSession.scala:615)\n  at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:772)\n  at org.apache.spark.sql.SparkSession.sql(SparkSession.scala:610)\n  ... 44 elided\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1611007187948_1935981728",
+      "id": "paragraph_1611007187948_1935981728",
+      "dateCreated": "2021-01-18T21:59:47+0000",
+      "dateStarted": "2021-01-18T22:09:50+0000",
+      "dateFinished": "2021-01-18T22:09:56+0000",
+      "status": "ERROR",
+      "$$hashKey": "object:2079"
+    },
+    {
+      "text": "val task3 = faktyDF.join(miejscaDF, faktyDF(\"id_miejsca\") == miejscaDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).groupBy(\"rok\", \"nazwa_regionu\").agg(count(\"id_miejsca\"))",
+      "user": "anonymous",
+      "dateUpdated": "2021-01-18T23:10:43+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "completionKey": "TAB",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "language": "scala"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "ERROR",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "<console>:22: \u001b[31merror: \u001b[0mnot found: value czasDF\n       val task3 = czasDF.join(miejscaDF, czasDF(\"id\") == miejscaDF(\"id\").groupBy(\"rok\").agg(count(\"nazwa_regionu\")))\n                   ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value miejscaDF\n       val task3 = czasDF.join(miejscaDF, czasDF(\"id\") == miejscaDF(\"id\").groupBy(\"rok\").agg(count(\"nazwa_regionu\")))\n                               ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value czasDF\n       val task3 = czasDF.join(miejscaDF, czasDF(\"id\") == miejscaDF(\"id\").groupBy(\"rok\").agg(count(\"nazwa_regionu\")))\n                                          ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value miejscaDF\n       val task3 = czasDF.join(miejscaDF, czasDF(\"id\") == miejscaDF(\"id\").groupBy(\"rok\").agg(count(\"nazwa_regionu\")))\n                                                          ^\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1611007705830_1848178918",
+      "id": "paragraph_1611007705830_1848178918",
+      "dateCreated": "2021-01-18T22:08:25+0000",
+      "dateStarted": "2021-01-18T22:14:10+0000",
+      "dateFinished": "2021-01-18T22:14:10+0000",
+      "status": "ERROR",
+      "$$hashKey": "object:2080"
+    },
+    {
+      "text": "val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))",
+      "user": "anonymous",
+      "dateUpdated": "2021-01-18T23:30:49+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "completionKey": "TAB",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "language": "scala"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1611008050743_1278435134",
+      "id": "paragraph_1611008050743_1278435134",
+      "dateCreated": "2021-01-18T22:14:10+0000",
+      "status": "ERROR",
+      "$$hashKey": "object:2081",
+      "dateFinished": "2021-01-18T23:30:43+0000",
+      "dateStarted": "2021-01-18T23:30:43+0000",
+      "results": {
+        "code": "ERROR",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "<console>:22: \u001b[31merror: \u001b[0mnot found: value faktyDF\n       val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))\n                   ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value typyDF\n       val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))\n                                ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value faktyDF\n       val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))\n                                        ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value typyDF\n       val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))\n                                                                 ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value czasDF\n       val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))\n                                                                                    ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value faktyDF\n       val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))\n                                                                                            ^\n<console>:22: \u001b[31merror: \u001b[0mnot found: value czasDF\n       val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))\n                                                                                                                   ^\n<console>:22: \u001b[31merror: \u001b[0mvalue like is not a member of String\n       val task1 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).filter(\"kategoria\".like(\"hgvs\")).groupBy(\"dzien_tygodnia\").agg(sum(\"liczba_pojazdow\"))\n                                                                                                                                                    ^\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "completionKey": "TAB",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "language": "scala"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1611012643477_1912883028",
+      "id": "paragraph_1611012643477_1912883028",
+      "dateCreated": "2021-01-18T23:30:43+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:2759",
+      "text": "val task2 = faktyDF.join(typyDF, faktyDF(\"id_pojazdu\") == typyDF(\"id\")).join(czasDF, faktyDF(\"id_czasu\") == czasDF(\"id\")).join(pogodaDF, faktyDF(\"id_pogody\") == pogodaDF(\"id\")).filter(\"typ\".like(\"two_wheeled_motor_vehicles\")).groupBy(\"miesiac\").agg(sum(\"liczba_pojazdow\"))",
+      "dateUpdated": "2021-01-18T23:36:13+0000"
+    }
+  ],
+  "name": "UKtrafic",
+  "id": "2FUD6972X",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.9.0",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/UKtrafic"
+}
