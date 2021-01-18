@@ -60,5 +60,5 @@ object Czas {
 		finalDataDF.write.insertInto("Czas")
 		println("Załadowano tabele 'Czas'")
 
-
+	}
 }
