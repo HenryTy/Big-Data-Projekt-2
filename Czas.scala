@@ -21,18 +21,18 @@ object Czas {
 		val mainNorthEngland = spark.read.format("org.apache.spark.csv")
 		  .option("header", true)
 		  .option("inferSchema", true)
-		  .csv(s"/user/$username/labs/spark/externaldata/mainNorthEngland.csv");
+		  .csv(s"args(0) + "/mainDataNorthEngland.csv"");
 		  
 		  
 		val mainSouthEngland = spark.read.format("org.apache.spark.csv")
 		  .option("header", true)
 		  .option("inferSchema", true)
-		  .csv(s"/user/$username/labs/spark/externaldata/mainSouthEngland.csv");	
+		  .csv(s"args(0) + "/mainDataSouthEngland.csv"");	
 
 		val mainScotland = spark.read.format("org.apache.spark.csv")
 		  .option("header", true)
 		  .option("inferSchema", true)
-		  .csv(s"/user/$username/labs/spark/externaldata/mainScotland.csv");	
+		  .csv(s"args(0) + "/mainDataScotland.csv"");	
 		  
 		  
 		val startTimeDF = mainNorthEngland
