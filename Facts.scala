@@ -84,21 +84,21 @@ object Facts {
 
     val trafficTimes = allTrafficWithTime.join(timeDF,
       to_timestamp(timeDF("data")) === allTrafficWithTime("timestampDate")
-    ).select(allTrafficWithTime("ID").as("id"), $"id_czasu")
+    ).select(allTrafficWithTime("ID").as("id"), timeDF("id").as("id_czasu"))
 
 
     val typesDF = spark.sql("SELECT * FROM typy_pojazdow")
 
     val trafficTypes = allTrafficWithTime.join(typesDF,
       typesDF("typ") === allTrafficWithTime("vehicle_type")
-    ).select(allTrafficWithTime("ID").as("id"), $"id_pojazdu")
+    ).select(allTrafficWithTime("ID").as("id"), typesDF("id").as("id_pojazdu"))
 
 
     val weatherDF = spark.sql("SELECT * FROM pogoda")
 
     val trafficWeather = allTrafficWithTimeAndWeather.join(weatherDF,
       weatherDF("opis_pogody") === allTrafficWithTime("conditions")
-    ).select(allTrafficWithTimeAndWeather("ID").as("id"), $"id_pogody")
+    ).select(allTrafficWithTimeAndWeather("ID").as("id"), weatherDF("id").as("id_pogody"))
 
 
     val locationDF = spark.sql("SELECT * FROM miejsca")
@@ -107,7 +107,7 @@ object Facts {
       weatherDF("kod_ons_obszaru") === allTrafficWithTime("local_authoirty_ons_code") &&
         weatherDF("nazwa_drogi") === allTrafficWithTime("road_name") &&
         weatherDF("kategoria_drogi") === allTrafficWithTime("road_category")
-    ).select(allTrafficWithTime("ID").as("id"), $"id_miejsca")
+    ).select(allTrafficWithTime("ID").as("id"), locationDF("id").as("id_miejsca"))
 
 
     val finalTable = trafficTimes
