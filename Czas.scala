@@ -43,15 +43,16 @@ object Czas {
 			
 		val timeDF = startTimeDF
 			.withColumn("godzina", col("hour"))
-			.withColumn("data", functions.date_format(col("count_date"), "MM/dd/yyyy"))
+			.withColumn("data", functions.date_format(col("count_date", "yyyy-MM-dd"))
 			.withColumn("rok", col("year"))
-			.withColumn("miesiac", functions.month(col("count_date")))
+			.withColumn("miesiac", functions.month(col("count_date")))		
+			.withColumn("dzien", functions.dayofmonth(col("count_date"))
 			.withColumn("kwartal", functions.quarter(col("count_date")))
 			.withColumn("dzien_tygodnia", functions.dayofweek(col("count_date")))
 			.drop("count_date")
 			.distinct()
 			
-		val allTimeDF = timeDF.withColumn("Time_id", monotonically_increasing_id).select("Time_id", "rok", "miesiac", "data", "godzina", "kwartal", "dzien_tygodnia")
+		val allTimeDF = timeDF.withColumn("Time_id", monotonically_increasing_id).select("Time_id", "data", "rok", "miesiac", "dzien", "godzina", "kwartal", "dzien_tygodnia")
 		
 		val window = Window.orderBy($"Time_id")
 		  
