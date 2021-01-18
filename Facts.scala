@@ -1,6 +1,6 @@
 package com.example.bigdata
 import org.apache.spark.sql._
-import org.apache.spark.sql.functions.split
+import org.apache.spark.sql.functions.{split, col, to_timestamp, hour}
 
 object Facts {
 
@@ -37,14 +37,13 @@ object Facts {
     val allTraffic = mainScotland
       .union(mainSouthEngland)
       .union(mainNorthEngland)
-      .dropDuplicates(Array("ID"));
 
 
     // LOADING WEATHER
     def getWeatherConditionsFromLine(line: String): String = {
       val pattern = """^ of (.+) on (.+) at (.+) the following weather conditions were reported: (.+)$""".r
       line match {
-        case pattern(local_authoirty_ons_code, date, time, conditions) => local_authoirty_ons_code + ";" + date + ";" + time.substring(0, 2) + ";" + conditions
+        case pattern(local_authoirty_ons_code, date, time, conditions) => local_authoirty_ons_code + ";" + date + " " + time + ";" + conditions
         case _ => "None"
       }
     }
@@ -55,10 +54,15 @@ object Facts {
       .withColumn("splitted", split($"value", ";"))
       .select(
         $"splited".getItem(0).as("local_authoirty_ons_code").cast("string"),
-        $"splited".getItem(1).as("date").cast("string"), //X: cast date as string
-        $"splited".getItem(2).as("hour").cast("int"),
-        $"splited".getItem(3).as("conditions").cast("string"))
-      .distinct()
+        $"splited".getItem(1).as("timestamp"),
+        $"splited".getItem(2).as("conditions").cast("string")
+      )
+      .withColumn("timestamp", to_timestamp($"timestamp", "yyyy-MM-dd HH:mm:ss.S"))
+      .withColumn("Year", functions.year(col("timestamp")))
+      .withColumn("Month", functions.month(col("timestamp")))
+      .withColumn("Day", functions.dayofmonth(col("timestamp")))
+      .withColumn("Hour", hour(col("timestamp")))
+
 
 
     // TRANSFORMATIONS
@@ -66,21 +70,20 @@ object Facts {
     val vehicle_types = Seq("pedal_cycles", "two_wheeled_motor_vehicles", "cars_and_taxis", "buses_and_coaches", "lgvs", "hgvs_2_rigid_axle", "hgvs_3_rigid_axle", "hgvs_4_or_more_rigid_axle", "hgvs_3_or_4_articulated_axle", "hgvs_5_articulated_axle", "hgvs_6_articulated_axle")
 
     val allTrafficWithTime = allTraffic.flatMap(r => vehicle_types.zipWithIndex.map(v =>
-      (r.getString(3).substring(0, 10), r.getInt(4), r.getString(5), r.getInt(v._2 + 17), v._1, r.getString(6), r.getString(7))))
-      .toDF("date", "hour", "local_authoirty_ons_code", "vehicle_count", "vehicle_type", "road_name", "road_category") //X: w tym miejscu substring?
+      (r.getInt(0), r.getTimestamp(3), r.getInt(4), r.getString(5), r.getInt(v._2 + 17), v._1, r.getString(6), r.getString(7))))  // to_timestamp(
+      .toDF("ID", "timestampDate", "hour", "local_authoirty_ons_code", "vehicle_count", "vehicle_type", "road_name", "road_category")
 
 
-    val allTrafficWithTimeAndWeather = allTraffic.join(weatherWithTime,
-      weatherWithTime("hour") === allTrafficWithTime("hour") &&
-        weatherWithTime("date") === allTrafficWithTime("date") &&
-        weatherWithTime("local_authoirty_ons_code") === allTrafficWithTime("local_authoirty_ons_code")
+    val allTrafficWithTimeAndWeather = allTrafficWithTime.join(weatherWithTime,
+      weatherWithTime("timestamp") === allTrafficWithTime("timestampDate") &&
+      weatherWithTime("local_authoirty_ons_code") === allTrafficWithTime("local_authoirty_ons_code")
     ).select(allTrafficWithTime("ID"), $"conditions")
+
 
     val timeDF = spark.sql("SELECT * FROM czas")
 
     val trafficTimes = allTrafficWithTime.join(timeDF,
-      timeDF("godzina") === allTrafficWithTime("hour") &&
-        timeDF("data") === allTrafficWithTime("date")
+      to_timestamp(timeDF("data")) === allTrafficWithTime("timestampDate")
     ).select(allTrafficWithTime("ID").as("id"), $"id_czasu")
 
 
