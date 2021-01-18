@@ -1,8 +1,6 @@
 package com.example.bigdata
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions.split
 
 object Facts {
 
@@ -113,12 +111,12 @@ object Facts {
       .join(trafficLocation, trafficLocation("id") === trafficTimes("id"))
       .join(trafficTypes, trafficTypes("id") === trafficTimes("id"))
       .join(trafficWeather, trafficWeather("id") === trafficTimes("id"))
-      .select($"id_czasu", $"id_pojazdu", $"id_miejsca", $"id_pogody", $"vehicle_count".as("liczba_pojazdow")) //?: vehicle_count
+      .select($"id_czasu", $"id_pojazdu", $"id_miejsca", $"id_pogody", $"vehicle_count".as("liczba_pojazdow")) //X: vehicle_count zadziala?
 
-    //finalDataDF.printSchema()
-    //finalDataDF.show()
+
+//    finalTable.show()
+//    finalTable.printSchema()
     finalTable.write.insertInto("fakty")
-    //finalTable.printSchema()
     println("Załadowano tabele faktow")
 
   }
