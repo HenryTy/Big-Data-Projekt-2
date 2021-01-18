@@ -39,7 +39,7 @@ object Miejsca {
       )
     val polaczone = razemDS.join(drogiDS, drogiDS("local_authoirty_ons_code") === razemDS("local_authority_ons_code")).
       select(
-        razemDS("region_ons_code"),
+        razemDS("local_authority_ons_code"),
         razemDS("local_authority_name"),
         razemDS("region_name"),
         drogiDS("road_name"),
@@ -49,7 +49,7 @@ object Miejsca {
     polaczone
       .distinct()
       .withColumn("id", monotonically_increasing_id + 1)
-      .select(col("id"), col("region_ons_code"), col("local_authority_name"), col("region_name"), col("road_name"), col("road_category"), col("road_type"))
+      .select(col("id"), col("local_authority_ons_code"), col("local_authority_name"), col("region_name"), col("road_name"), col("road_category"), col("road_type"))
       .write
       .insertInto("miejsca")
   }
