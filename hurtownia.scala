@@ -5,7 +5,7 @@ spark.sql("DROP TABLE IF EXISTS `pogoda`")
 spark.sql("DROP TABLE IF EXISTS `fakty`")
 
 spark.sql("""CREATE TABLE `czas` (
- `id` int,
+ `id` bigint,
  `rok` int,
  `miesiac` int,
  `data` date,
@@ -56,9 +56,9 @@ OUTPUTFORMAT
  'org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat'""")
 
 spark.sql("""CREATE TABLE `fakty` (
- `id_czasu` int,
+ `id_czasu` bigint,
  `id_pojazdu` int,
- `id_miejsca` int,
+ `id_miejsca` bigint,
  `id_pogody` int,
  `liczba_pojazdow` int)
 ROW FORMAT SERDE
