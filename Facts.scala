@@ -22,17 +22,17 @@ object Facts {
     val mainScotland = spark.read.format("org.apache.spark.csv")
       .option("header", true)
       .option("inferSchema", true)
-      .csv(s"/user/$username/labs/spark/uk-traffic/mainDataScotland.csv") //X: dane musza byc tutaj zaladowane
+      .csv(args(0) + "/mainDataScotland.csv")
 
     val mainSouthEngland = spark.read.format("org.apache.spark.csv")
       .option("header", true)
       .option("inferSchema", true)
-      .csv(s"/user/$username/labs/spark/uk-traffic/mainDataSouthEngland.csv")
+      .csv(args(0) + "/mainDataSouthEngland.csv")
 
     val mainNorthEngland = spark.read.format("org.apache.spark.csv")
       .option("header", true)
       .option("inferSchema", true)
-      .csv(s"/user/$username/labs/spark/uk-traffic/mainDataNorthEngland.csv")
+      .csv(args(0) + "/mainDataNorthEngland.csv")
 
     val allTraffic = mainScotland
       .union(mainSouthEngland)
@@ -48,7 +48,7 @@ object Facts {
       }
     }
 
-    val weatherWithTime = spark.read.textFile(s"/user/ventus_piotrek/labs/spark/uk-traffic/weather.txt")
+    val weatherWithTime = spark.read.textFile(args(0) + "/weather.txt")
       .map(line => getWeatherConditionsFromLine(line))
       .withColumn("splitted", split($"value", ";"))
       .select(
@@ -102,7 +102,7 @@ object Facts {
         locationDF("kategoria_drogi") === allTrafficWithTime("road_category")
     ).select(timeDF("id").as("id_czasu"), typesDF("id").as("id_pojazdu"), locationDF("id").as("id_miejsca"), weatherDF("id").as("id_pogody"), allTrafficWithTime("vehicle_count").as("liczba_pojazdow"))
 
-    
+
     finalTable.write.insertInto("fakty")
     println("Załadowano tabele faktow")
 
